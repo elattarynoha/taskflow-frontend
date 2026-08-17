@@ -1,1 +1,79 @@
-<p>project-detail works!</p>
+<div class="page-container">
+  <header>
+    <a routerLink="/projects" class="back-link">← Back to projects</a>
+    <h1>{{ project?.name || 'Loading...' }}</h1>
+    <p class="description">{{ project?.description }}</p>
+  </header>
+
+  <div class="new-task-form">
+    <input type="text" placeholder="Task title" [(ngModel)]="newTaskTitle" />
+    <input type="text" placeholder="Description (optional)" [(ngModel)]="newTaskDescription" />
+    <button (click)="createTask()">+ Add Task</button>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  <div class="board">
+    <div class="column">
+      <h2>To Do <span class="count">{{ todoTasks.length }}</span></h2>
+      <div
+        cdkDropList
+        #todoList="cdkDropList"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="[inProgressList, doneList]"
+        (cdkDropListDropped)="drop($event, 'TODO')"
+        class="task-list"
+      >
+        @for (task of todoTasks; track task.id) {
+          <div class="task-card" cdkDrag>
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+            <button class="delete-task-btn" (click)="deleteTask(task)">×</button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="column">
+      <h2>In Progress <span class="count">{{ inProgressTasks.length }}</span></h2>
+      <div
+        cdkDropList
+        #inProgressList="cdkDropList"
+        [cdkDropListData]="inProgressTasks"
+        [cdkDropListConnectedTo]="[todoList, doneList]"
+        (cdkDropListDropped)="drop($event, 'IN_PROGRESS')"
+        class="task-list"
+      >
+        @for (task of inProgressTasks; track task.id) {
+          <div class="task-card" cdkDrag>
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+            <button class="delete-task-btn" (click)="deleteTask(task)">×</button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="column">
+      <h2>Done <span class="count">{{ doneTasks.length }}</span></h2>
+      <div
+        cdkDropList
+        #doneList="cdkDropList"
+        [cdkDropListData]="doneTasks"
+        [cdkDropListConnectedTo]="[todoList, inProgressList]"
+        (cdkDropListDropped)="drop($event, 'DONE')"
+        class="task-list"
+      >
+        @for (task of doneTasks; track task.id) {
+          <div class="task-card" cdkDrag>
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+            <button class="delete-task-btn" (click)="deleteTask(task)">×</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

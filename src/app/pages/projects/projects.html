@@ -1,1 +1,40 @@
-<p>projects works!</p>
+<div class="page-container">
+  <header>
+    <h1>My Projects</h1>
+    <button class="logout-btn" (click)="logout()">Log out</button>
+  </header>
+
+  <div class="new-project-form">
+    <input
+      type="text"
+      placeholder="Project name"
+      [(ngModel)]="newProjectName"
+    />
+    <input
+      type="text"
+      placeholder="Description (optional)"
+      [(ngModel)]="newProjectDescription"
+    />
+    <button (click)="createProject()">+ New Project</button>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (isLoading) {
+    <p>Loading...</p>
+  } @else if (projects.length === 0) {
+    <p class="empty-state">No projects yet. Create your first one above.</p>
+  } @else {
+    <div class="project-grid">
+      @for (project of projects; track project.id) {
+        <div class="project-card" (click)="openProject(project.id)">
+  <h3>{{ project.name }}</h3>
+  <p>{{ project.description || 'No description' }}</p>
+  <button class="delete-btn" (click)="deleteProject(project.id); $event.stopPropagation()">Delete</button>
+</div>
+      }
+    </div>
+  }
+</div>
