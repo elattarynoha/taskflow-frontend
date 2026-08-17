@@ -7,11 +7,10 @@ import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.mode
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class Auth {
   private apiUrl = 'http://localhost:8080/api/auth';
   private tokenKey = 'taskflow_token';
 
-  // signal so components can reactively know if the user is logged in
   isLoggedIn = signal<boolean>(!!this.getToken());
 
   constructor(private http: HttpClient, private router: Router) {}
