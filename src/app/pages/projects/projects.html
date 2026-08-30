@@ -1,40 +1,74 @@
 <div class="page-container">
   <header>
-    <h1>My Projects</h1>
-    <button class="logout-btn" (click)="logout()">Log out</button>
+    <div>
+      <h1>My Projects</h1>
+      <p class="subtitle">{{ projects().length }} project{{ projects().length !== 1 ? 's' : '' }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="primary-btn" (click)="openCreateModal()">+ New Project</button>
+      <button class="logout-btn" (click)="logout()">Log out</button>
+    </div>
   </header>
 
-  <div class="new-project-form">
-    <input
-      type="text"
-      placeholder="Project name"
-      [(ngModel)]="newProjectName"
-    />
-    <input
-      type="text"
-      placeholder="Description (optional)"
-      [(ngModel)]="newProjectDescription"
-    />
-    <button (click)="createProject()">+ New Project</button>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error">{{ errorMessage }}</p>
+  @if (errorMessage()) {
+    <p class="error">{{ errorMessage() }}</p>
   }
 
-  @if (isLoading) {
-    <p>Loading...</p>
-  } @else if (projects.length === 0) {
-    <p class="empty-state">No projects yet. Create your first one above.</p>
+  @if (isLoading()) {
+    <p class="loading">Loading projects...</p>
+  } @else if (projects().length === 0) {
+    <div class="empty-state">
+      <p>No projects yet</p>
+      <button class="primary-btn" (click)="openCreateModal()">Create your first project</button>
+    </div>
   } @else {
     <div class="project-grid">
-      @for (project of projects; track project.id) {
+      @for (project of projects(); track project.id) {
         <div class="project-card" (click)="openProject(project.id)">
-  <h3>{{ project.name }}</h3>
-  <p>{{ project.description || 'No description' }}</p>
-  <button class="delete-btn" (click)="deleteProject(project.id); $event.stopPropagation()">Delete</button>
-</div>
+          <div class="project-avatar">{{ project.name.charAt(0).toUpperCase() }}</div>
+          <div class="project-info">
+            <h3>{{ project.name }}</h3>
+            <p>{{ project.description || 'No description' }}</p>
+            @if (project.startDate || project.dueDate) {
+              <p class="project-dates">
+                @if (project.startDate) { {{ project.startDate }} }
+                @if (project.startDate && project.dueDate) { → }
+                @if (project.dueDate) { {{ project.dueDate }} }
+              </p>
+            }
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" (click)="openEditModal(project, $event)" title="Edit">✎</button>
+            <button class="icon-btn delete" (click)="deleteProject(project.id, $event)" title="Delete">🗑</button>
+          </div>
+        </div>
       }
     </div>
   }
 </div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>{{ modalMode() === 'create' ? 'New Project' : 'Edit Project' }}</h2>
+      <input type="text" placeholder="Project name" [(ngModel)]="formName" autofocus />
+      <textarea placeholder="Description (optional)" [(ngModel)]="formDescription" rows="3"></textarea>
+      <div class="date-row">
+        <div class="date-field">
+          <label>Start date</label>
+          <input type="date" [(ngModel)]="formStartDate" />
+        </div>
+        <div class="date-field">
+          <label>Due date</label>
+          <input type="date" [(ngModel)]="formDueDate" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="secondary-btn" (click)="closeModal()">Cancel</button>
+        <button class="primary-btn" (click)="submitModal()">
+          {{ modalMode() === 'create' ? 'Create' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

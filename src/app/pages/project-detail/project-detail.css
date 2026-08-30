@@ -137,3 +137,122 @@ header h1 {
 .cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
   transition: transform 0.2s;
 }
+.priority-select {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: white;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.priority-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.priority-low {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.priority-medium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.priority-high {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.task-actions {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.task-edit-btn {
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 0.9rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.task-edit-btn:hover {
+  color: #4f46e5;
+}
+
+/* Reuse modal styles from projects.css if not already global */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 1.8rem;
+  width: 400px;
+  max-width: 90vw;
+}
+
+.modal h2 {
+  margin: 0 0 1.2rem 0;
+  color: #1a1a1a;
+}
+
+.modal input, .modal textarea, .modal-select {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.primary-btn {
+  padding: 0.7rem 1.2rem;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.secondary-btn {
+  padding: 0.7rem 1.2rem;
+  background: #f3f4f6;
+  color: #444;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
