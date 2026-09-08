@@ -1,5 +1,5 @@
 .page-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -7,86 +7,148 @@
 header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
 }
 
 h1 {
   color: #1a1a1a;
+  margin: 0;
+}
+
+.subtitle {
+  color: #999;
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.primary-btn {
+  padding: 0.7rem 1.2rem;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.primary-btn:hover {
+  background: #4338ca;
+}
+
+.secondary-btn {
+  padding: 0.7rem 1.2rem;
+  background: #f3f4f6;
+  color: #444;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .logout-btn {
   background: none;
   border: 1px solid #ddd;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
   cursor: pointer;
   color: #666;
 }
 
-.new-project-form {
-  display: flex;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
-}
-
-.new-project-form input {
-  flex: 1;
-  padding: 0.7rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.new-project-form button {
-  padding: 0.7rem 1.2rem;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
 
 .project-card {
   background: white;
   border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 1.3rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  gap: 0.9rem;
+  position: relative;
 }
 
 .project-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-.project-card h3 {
-  margin: 0 0 0.5rem 0;
+.project-card:hover .card-actions {
+  opacity: 1;
+}
+
+.project-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.project-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-info h3 {
+  margin: 0 0 0.3rem 0;
   color: #1a1a1a;
 }
 
-.project-card p {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+.project-info p {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.delete-btn {
-  background: none;
+.card-actions {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  display: flex;
+  gap: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.icon-btn {
+  background: #f9fafb;
   border: none;
-  color: #dc2626;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  font-size: 0.85rem;
-  padding: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.icon-btn:hover {
+  background: #eee;
+}
+
+.icon-btn.delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .error {
@@ -94,8 +156,92 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.empty-state {
+.loading {
   color: #999;
   text-align: center;
   padding: 3rem 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 0;
+  color: #999;
+}
+
+.empty-state p {
+  margin-bottom: 1rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 1.8rem;
+  width: 400px;
+  max-width: 90vw;
+}
+
+.modal h2 {
+  margin: 0 0 1.2rem 0;
+  color: #1a1a1a;
+}
+
+.modal input, .modal textarea {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.date-row {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.date-field {
+  flex: 1;
+}
+
+.date-field label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+}
+
+.date-field input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.project-dates {
+  font-size: 0.78rem;
+  color: #999;
+  margin: 0.3rem 0 0 0;
 }

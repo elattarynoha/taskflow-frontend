@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +10,8 @@ interface Project {
   name: string;
   description: string;
   ownerEmail: string;
+  startDate: string | null;
+  dueDate: string | null;
 }
 
 @Component({
@@ -20,11 +22,18 @@ interface Project {
   styleUrl: './projects.css'
 })
 export class Projects implements OnInit {
-  projects: Project[] = [];
-  newProjectName = '';
-  newProjectDescription = '';
-  isLoading = false;
-  errorMessage = '';
+  projects = signal<Project[]>([]);
+  isLoading = signal(false);
+  errorMessage = signal('');
+
+  // Modal state
+  showModal = signal(false);
+  modalMode = signal<'create' | 'edit'>('create');
+  editingProjectId: number | null = null;
+  formName = '';
+  formDescription = '';
+  formStartDate = '';
+  formDueDate = '';
 
   private apiUrl = 'http://localhost:8080/api/projects';
 
@@ -39,46 +48,89 @@ export class Projects implements OnInit {
   }
 
   loadProjects(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.http.get<Project[]>(this.apiUrl).subscribe({
       next: (data) => {
-        this.projects = data;
-        this.isLoading = false;
+        this.projects.set(data);
+        this.isLoading.set(false);
       },
       error: (err) => {
-        this.errorMessage = 'Failed to load projects';
-        this.isLoading = false;
+        this.errorMessage.set('Failed to load projects');
+        this.isLoading.set(false);
         console.error(err);
       }
     });
   }
 
-  createProject(): void {
-    if (!this.newProjectName.trim()) return;
-
-    this.http.post<Project>(this.apiUrl, {
-      name: this.newProjectName,
-      description: this.newProjectDescription
-    }).subscribe({
-      next: (project) => {
-        this.projects.push(project);
-        this.newProjectName = '';
-        this.newProjectDescription = '';
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to create project';
-        console.error(err);
-      }
-    });
+  openCreateModal(): void {
+    this.modalMode.set('create');
+    this.formName = '';
+    this.formDescription = '';
+    this.formStartDate = '';
+    this.formDueDate = '';
+    this.showModal.set(true);
   }
 
-  deleteProject(id: number): void {
+  openEditModal(project: Project, event: Event): void {
+    event.stopPropagation();
+    this.modalMode.set('edit');
+    this.editingProjectId = project.id;
+    this.formName = project.name;
+    this.formDescription = project.description;
+    this.formStartDate = project.startDate ?? '';
+    this.formDueDate = project.dueDate ?? '';
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  submitModal(): void {
+    if (!this.formName.trim()) return;
+
+    const payload = {
+      name: this.formName,
+      description: this.formDescription,
+      startDate: this.formStartDate || null,
+      dueDate: this.formDueDate || null
+    };
+
+    if (this.modalMode() === 'create') {
+      this.http.post<Project>(this.apiUrl, payload).subscribe({
+        next: (project) => {
+          this.projects.update(list => [...list, project]);
+          this.closeModal();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message ?? 'Failed to create project');
+          console.error(err);
+        }
+      });
+    } else {
+      this.http.patch<Project>(`${this.apiUrl}/${this.editingProjectId}`, payload).subscribe({
+        next: (updated) => {
+          this.projects.update(list =>
+            list.map(p => p.id === updated.id ? updated : p)
+          );
+          this.closeModal();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message ?? 'Failed to update project');
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  deleteProject(id: number, event: Event): void {
+    event.stopPropagation();
     this.http.delete(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
-        this.projects = this.projects.filter(p => p.id !== id);
+        this.projects.update(list => list.filter(p => p.id !== id));
       },
       error: (err) => {
-        this.errorMessage = 'Failed to delete project';
+        this.errorMessage.set('Failed to delete project');
         console.error(err);
       }
     });
