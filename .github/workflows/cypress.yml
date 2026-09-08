@@ -15,7 +15,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: taskflow
-          POSTGRES_PASSWORD: taskflow
+          POSTGRES_PASSWORD: postgresql
           POSTGRES_DB: taskflow_ci
         ports:
           - 5432:5432
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout du backend (Spring Boot)
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/elattarynoha/TASKFLOW-API  # <-- remplace TON_ORG_OU_USER
+          repository: elattarynoha/TASKFLOW-API # <-- remplace TON_ORG_OU_USER
           path: backend
           # Décommente si le repo backend est PRIVÉ :
           # token: ${{ secrets.BACKEND_REPO_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
           # Ces variables surchargent application.properties automatiquement (relaxed binding Spring Boot)
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow_ci
           SPRING_DATASOURCE_USERNAME: taskflow
-          SPRING_DATASOURCE_PASSWORD: taskflow
+          SPRING_DATASOURCE_PASSWORD: postgresql
           SPRING_JPA_HIBERNATE_DDL_AUTO: update
         run: nohup mvn spring-boot:run > ../backend.log 2>&1 &
 
