@@ -14,9 +14,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: taskflow
-          POSTGRES_PASSWORD: postgresql
-          POSTGRES_DB: taskflow_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgresql123
+          POSTGRES_DB: taskflow
         ports:
           - 5432:5432
         options: >-
@@ -57,10 +57,14 @@ jobs:
         working-directory: ./backend
         env:
           # Ces variables surchargent application.properties automatiquement (relaxed binding Spring Boot)
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow_ci
-          SPRING_DATASOURCE_USERNAME: taskflow
-          SPRING_DATASOURCE_PASSWORD: postgresql
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgresql123
           SPRING_JPA_HIBERNATE_DDL_AUTO: update
+          SPRING_JPA_SHOW_SQL: "true"
+          SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+          SPRING_JPA_OPEN_IN_VIEW: "false"
         run: nohup mvn spring-boot:run > ../backend.log 2>&1 &
 
       - name: Attente que le backend soit prêt (port 8080)
