@@ -33,43 +33,41 @@ jobs:
           path: frontend
 
       # ---------- CHECKOUT BACKEND (dépôt séparé) ----------
-      - name: Checkout du backend (Spring Boot)
-        uses: actions/checkout@v4
-        with:
-          repository: elattarynoha/TASKFLOW-API # <-- remplace TON_ORG_OU_USER
-          path: backend
-          # Décommente si le repo backend est PRIVÉ :
-          # token: ${{ secrets.BACKEND_REPO_TOKEN }}
+     - name: Checkout du backend (Spring Boot)
+  uses: actions/checkout@v4
+  with:
+    repository: elattarynoha/TASKFLOW-API
+    path: backend
 
-      # ---------- BACKEND (Spring Boot) ----------
-      - name: Installation de Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'
+- name: Installation de Java 17
+  uses: actions/setup-java@v4
+  with:
+    distribution: 'temurin'
+    java-version: '17'
+    cache: 'maven'
+    cache-dependency-path: './backend/pom.xml'  # ← Explicitly specify pom.xml path
 
-      - name: Build du backend Spring Boot
-        working-directory: ./backend
-        run: mvn clean install -DskipTests
+- name: Build du backend Spring Boot
+  working-directory: ./backend
+  run: mvn clean install -DskipTests
 
-      - name: Démarrage du backend Spring Boot
-        working-directory: ./backend
-        env:
-          # Ces variables surchargent application.properties automatiquement (relaxed binding Spring Boot)
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgresql123
-          SPRING_JPA_HIBERNATE_DDL_AUTO: update
-          SPRING_JPA_SHOW_SQL: "true"
-          SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-          SPRING_JPA_OPEN_IN_VIEW: "false"
-        run: nohup mvn spring-boot:run > ../backend.log 2>&1 &
+- name: Démarrage du backend Spring Boot
+  working-directory: ./backend
+  env:
+    SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow
+    SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+    SPRING_DATASOURCE_USERNAME: postgres  # ← Ensure this matches service config
+    SPRING_DATASOURCE_PASSWORD: postgresql123
+    SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    SPRING_JPA_SHOW_SQL: "true"
+    SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    SPRING_JPA_OPEN_IN_VIEW: "false"
+  run: |
+    nohup mvn spring-boot:run > ../backend.log 2>&1 &
+    sleep 5
 
-      - name: Attente que le backend soit prêt (port 8080)
-        run: npx wait-on tcp:localhost:8080 -t 120000
-
+- name: Attesa che il backend sia pronto (port 8080)
+  run: npx wait-on tcp:localhost:8080 -t 120000 --delay 1000
       # ---------- FRONTEND (Angular) ----------
       - name: Installation de Node.js
         uses: actions/setup-node@v4

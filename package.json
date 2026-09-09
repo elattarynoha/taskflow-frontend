@@ -28,13 +28,9 @@
     "@angular/cli": "^21.2.20",
     "@angular/compiler-cli": "^21.2.0",
     "cypress": "^16.0.0",
-<<<<<<< HEAD
-    "cypress-axe": "^2.0.0",
-=======
 
     "cypress-axe": "^2.0.0", 
 
->>>>>>> faa5f8def4203e19214c20d0d70d2cbcc030e9a9
     "cypress-real-events": "^1.15.0",
     "cypress-xpath": "^2.0.1",
     "jsdom": "^28.0.0",
