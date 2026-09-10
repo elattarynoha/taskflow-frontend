@@ -1,9 +1,25 @@
 describe('E2E-002 - Connexion utilisateur', () => {
 
-  it('should login successfully and access protected page', () => {
+  const email = 'Noha@test.com';
+  const password = 'Noha1234';
+  const fullName = 'Noha Test';
 
-    const email = 'Noha@test.com';
-    const password = 'Noha1234';
+  before(() => {
+    // Crée le compte s'il n'existe pas encore (idempotent : on ignore les erreurs
+    // si le compte existe déjà, ex: 400/409)
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:8080/api/auth/register',
+      failOnStatusCode: false,
+      body: {
+        fullName,
+        email,
+        password,
+      },
+    });
+  });
+
+  it('should login successfully and access protected page', () => {
 
     cy.visit('/login');
 
@@ -19,11 +35,11 @@ describe('E2E-002 - Connexion utilisateur', () => {
       .click();
 
     cy.wait('@login').then((interception) => {
-  expect(interception.response, 'La réponse HTTP doit exister').to.exist;
-  
-  expect(interception.response!.statusCode).to.eq(200);
-  expect(interception.response!.body).to.have.property('token');
-});
+      expect(interception.response, 'La réponse HTTP doit exister').to.exist;
+
+      expect(interception.response!.statusCode).to.eq(200);
+      expect(interception.response!.body).to.have.property('token');
+    });
 
     cy.url()
       .should('not.include', '/login');
@@ -34,34 +50,34 @@ describe('E2E-002 - Connexion utilisateur', () => {
       .should('include', '/projects');
   });
 
-it('should reject invalid credentials', () => {
+  it('should reject invalid credentials', () => {
 
-  cy.visit('/login');
+    cy.visit('/login');
 
-  cy.get('input[name="email"]')
-    .type('wrong@example.com');
+    cy.get('input[name="email"]')
+      .type('wrong@example.com');
 
-  cy.get('input[name="password"]')
-    .type('WrongPassword');
+    cy.get('input[name="password"]')
+      .type('WrongPassword');
 
-  cy.intercept('POST', '**/api/auth/login').as('login');
+    cy.intercept('POST', '**/api/auth/login').as('login');
 
-  cy.get('button[type="submit"]')
-    .click();
+    cy.get('button[type="submit"]')
+      .click();
 
-  cy.wait('@login').then((interception) => {
-  expect(interception.response, 'La réponse HTTP doit exister').to.exist;
+    cy.wait('@login').then((interception) => {
+      expect(interception.response, 'La réponse HTTP doit exister').to.exist;
 
-  expect(interception.response!.statusCode).to.eq(401);
-  expect(interception.response!.body).to.have.property('message', 'Invalid email or password');
-});
+      expect(interception.response!.statusCode).to.eq(401);
+      expect(interception.response!.body).to.have.property('message', 'Invalid email or password');
+    });
 
-  // Vérifier que l'utilisateur reste bloqué sur /login
-  cy.url()
-    .should('include', '/login');
+    // Vérifier que l'utilisateur reste bloqué sur /login
+    cy.url()
+      .should('include', '/login');
 
-//   // Vérifier le message d'erreur affiché à l'écran
-//   cy.contains('Invalid email or password')
-//     .should('be.visible');
-});
+    //   // Vérifier le message d'erreur affiché à l'écran
+    //   cy.contains('Invalid email or password')
+    //     .should('be.visible');
+  });
 });
