@@ -83,13 +83,17 @@ jobs:
 
       # ---------- CYPRESS ----------
       - name: Exécution des tests Cypress
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: ./frontend
           start: npm start
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 120
           browser: chrome
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload des screenshots (si échec)
         uses: actions/upload-artifact@v4

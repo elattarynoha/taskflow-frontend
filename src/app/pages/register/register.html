@@ -1,9 +1,9 @@
-<p>register works!</p>
 <div class="auth-container">
   <div class="auth-card">
     <h1>Create your TaskFlow account</h1>
 
     <form (ngSubmit)="onSubmit()">
+   
       <div class="form-group">
         <label for="fullName">Full name</label>
         <input type="text" id="fullName" name="fullName" [(ngModel)]="fullName" required placeholder="Jane Doe" />
@@ -19,17 +19,15 @@
         <input type="password" id="password" name="password" [(ngModel)]="password" required placeholder="••••••••" />
       </div>
 
-      @if (errorMessage) {
-        <p class="error">{{ errorMessage }}</p>
+
+      @if (errorMessage()) {
+        <p class="error" data-cy="error-message">{{ errorMessage() }}</p>
       }
 
-      <button type="submit" [disabled]="isLoading">
-        {{ isLoading ? 'Creating account...' : 'Register' }}
+      <button type="submit" [disabled]="isLoading()">
+        {{ isLoading() ? 'Creating account...' : 'Register' }}
       </button>
     </form>
-
-    <p class="switch-link">
-      Already have an account? <a routerLink="/login">Log in</a>
-    </p>
+    <!-- ... -->
   </div>
 </div>
